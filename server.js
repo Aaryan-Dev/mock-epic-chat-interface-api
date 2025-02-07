@@ -14,14 +14,21 @@ app.use(express.json());
 
 app.post("/api/messages", async (req, res) => {
   try {
-    const { messages } = req.body;
+    const { content, source } = req.body;
+
+    // Generate timestamp
+    const timestamp = new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
 
     res.setHeader("Content-Type", "text/plain");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
     const stream = await groq.chat.completions.create({
-      messages,
+      messages: content,
       model: "gemma2-9b-it",
       temperature: 0.6,
       max_completion_tokens: 4096,
@@ -30,12 +37,16 @@ app.post("/api/messages", async (req, res) => {
       stop: null,
     });
 
+    let finalContent = "";
+    let id;
+
     for await (const chunk of stream) {
       const content = chunk.choices[0]?.delta?.content || "";
-      res.write(content);
+      id = chunk.id;
+      finalContent = finalContent + content;
     }
 
-    res.end();
+    res.send({ id, content:  finalContent, timestamp, type: "ai" });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal server error" });

@@ -5,7 +5,7 @@ require("dotenv").config();
 
 const app = express();
 const groq = new Groq({
-  apiKey: "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",
+  apiKey: process.env.API_KEY,
   dangerouslyAllowBrowser: true,
 });
 
@@ -46,7 +46,7 @@ app.post("/api/messages", async (req, res) => {
       finalContent = finalContent + content;
     }
 
-    res.send({ id, content:  finalContent, timestamp, type: "ai" });
+    res.send({ id, content: finalContent, timestamp, type: "ai" });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal server error" });

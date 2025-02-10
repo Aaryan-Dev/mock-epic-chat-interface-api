@@ -16,13 +16,6 @@ app.post("/api/messages", async (req, res) => {
   try {
     const { content, source } = req.body;
 
-    // Generate timestamp
-    const timestamp = new Date().toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-
     res.setHeader("Content-Type", "text/plain");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
@@ -45,6 +38,13 @@ app.post("/api/messages", async (req, res) => {
       id = chunk.id;
       finalContent = finalContent + content;
     }
+
+    // Generate timestamp
+    const timestamp = new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
 
     res.send({ id, content: finalContent, timestamp, type: "ai" });
   } catch (error) {

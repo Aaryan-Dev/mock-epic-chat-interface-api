@@ -40,8 +40,9 @@ app.post("/api/messages", async (req, res) => {
     }
 
     // Generate timestamp
-    const timestamp = new Date().toLocaleTimeString("en-US", {
+    const timestamp = new Date().toLocaleTimeString("en-IN", {
       hour: "numeric",
+      timeZone: "Asia/Kolkata",
       minute: "2-digit",
       hour12: true,
     });
